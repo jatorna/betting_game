@@ -43,7 +43,7 @@ contract JtnToken {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner);
+        require(msg.sender == _owner, "Only owner can do this");
         _;
     }
 
@@ -69,16 +69,16 @@ contract JtnToken {
 
     function transfer(address recipient, uint256 amount) public returns (bool) {
 
-        require(recipient != address(0));
+        require(recipient != address(0), "Payee address must not be zero address");
         return _transfer(msg.sender, recipient, amount);
     }
 
     function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
 
-        require(sender != address(0));
-        require(recipient != address(0));
-        require(amount <= _balances[sender] - _heldBalance[sender]);
-        require(amount <= _allowances[sender][msg.sender]);
+        require(sender != address(0), "Payer address must not be zero address");
+        require(recipient != address(0), "Payee address must not be zero address");
+        require(amount <= _balances[sender] - _heldBalance[sender], "Not enough tokens available");
+        require(amount <= _allowances[sender][msg.sender], "Not allowance tokens available");
         _transfer(sender, recipient, amount);
         _approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
         return true;
@@ -125,7 +125,7 @@ contract JtnToken {
     }
 
     function _transfer(address sender, address recipient, uint256 amount) private returns (bool) {
-        require(amount <= _balances[sender] - _heldBalance[sender]);
+        require(amount <= _balances[sender] - _heldBalance[sender], "Not enought token available");
         _balances[sender] = _balances[sender] - amount;
         _balances[recipient] = _balances[recipient] + amount;
         emit Transfer(sender, recipient, amount);
@@ -166,7 +166,6 @@ contract JtnToken {
         Hold storage executableHold = _holds[holdId];
         require(executableHold.status == HoldStatusCode.Ordered, "A hold can only be executed in status Ordered");
         require(executableHold.origin == msg.sender, "Only the hold creator has allow execute the hold");
-        //Check
         _totalHeldBalance = _totalHeldBalance - executableHold.amount;
         _heldBalance[executableHold.origin] = _heldBalance[executableHold.origin] - executableHold.amount;
         executableHold.status = HoldStatusCode.Executed;
