@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+       - "3500:3500"
+    command: python manage.py runserver 0.0.0.0:3500
+    volumes:
+       - .:/usr/src/app
+  ganache:
+    image: "trufflesuite/ganache-cli:latest"
+    ports:
+       - "7545:7545"
+    command: ganache-cli --accounts 100 -d -i 1337 --db ganache_db -p 7545
