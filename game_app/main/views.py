@@ -58,8 +58,14 @@ def logout_request(request):
 def bet_request(request):
     if request.method == "POST":
 
+        if settings.IS_BETTING:
+            return redirect("main:userpage")
+
+        settings.IS_BETTING = True
+
         if CurrentBet.objects.filter(username=request.user.username).count() >= 1:
             messages.error(request, "This user has already bet. Wait for other players.")
+            settings.IS_BETTING = False
             return redirect("main:userpage")
 
         nonce = settings.W3.eth.getTransactionCount(request.user.address)
@@ -71,6 +77,7 @@ def bet_request(request):
 
         except exceptions.ContractLogicError as error:
             messages.error(request, "Error: " + str(error))
+            settings.IS_BETTING = False
             return redirect("main:userpage")
 
         signed_greeting_txn = settings.W3.eth.account.sign_transaction(
@@ -124,5 +131,7 @@ def bet_request(request):
             tx_receipt = settings.W3.eth.wait_for_transaction_receipt(tx_greeting_hash)
 
             CurrentBet.objects.all().delete()
+
+        settings.IS_BETTING = False
 
         return redirect("main:userpage")

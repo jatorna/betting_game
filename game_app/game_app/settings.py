@@ -142,3 +142,7 @@ ACCOUNTS = json.load(f)['private_keys']
 JTN_TOKEN_ADDRESS = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab'
 W3 = Web3(Web3.HTTPProvider("http://ganache:7545"))
 JTN_TOKEN = W3.eth.contract(address=JTN_TOKEN_ADDRESS, abi=abi)
+
+# Is betting Flag
+IS_BETTING = False
+
