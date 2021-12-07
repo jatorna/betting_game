@@ -146,3 +146,6 @@ JTN_TOKEN = W3.eth.contract(address=JTN_TOKEN_ADDRESS, abi=abi)
 # Is betting Flag
 IS_BETTING = False
 
+# Next Address Index
+NEXT_ADDRESS_INDEX = 1
+

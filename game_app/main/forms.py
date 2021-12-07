@@ -16,7 +16,7 @@ class NewUserForm(UserCreationForm):
     def save(self, commit=True):
         user = super(NewUserForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-        user.address = list(settings.ACCOUNTS.keys())[User.objects.all().count()]
+        user.address = list(settings.ACCOUNTS.keys())[settings.NEXT_ADDRESS_INDEX]
         user.bets = 0
         if commit:
             user.save()
@@ -33,5 +33,7 @@ class NewUserForm(UserCreationForm):
 
         tx_greeting_hash = settings.W3.eth.send_raw_transaction(signed_greeting_txn.rawTransaction)
         tx_receipt = settings.W3.eth.wait_for_transaction_receipt(tx_greeting_hash)
+
+        settings.NEXT_ADDRESS_INDEX += 1
 
         return user
