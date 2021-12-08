@@ -22,9 +22,27 @@ def register_request(request):
         form = NewUserForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.address = list(settings.ACCOUNTS.keys())[user.id]
+            user.save()
+
+            # Transfer 100 tokens from owner to user address
+            nonce = settings.W3.eth.getTransactionCount(list(settings.ACCOUNTS.keys())[0])
+            greeting_transaction = settings.JTN_TOKEN.functions.transfer(user.address,
+                                                                         100).buildTransaction(
+                {"chainId": settings.CHAIN_ID, "from": list(settings.ACCOUNTS.keys())[0], "nonce": nonce}
+            )
+            signed_greeting_txn = settings.W3.eth.account.sign_transaction(
+                greeting_transaction, private_key=settings.ACCOUNTS[list(settings.ACCOUNTS.keys())[0]]
+            )
+
+            tx_greeting_hash = settings.W3.eth.send_raw_transaction(signed_greeting_txn.rawTransaction)
+            tx_receipt = settings.W3.eth.wait_for_transaction_receipt(tx_greeting_hash)
+
             login(request, user)
             messages.success(request, "Registration successful.")
+
             return redirect("main:userpage")
+
         messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(request=request, template_name="main/register.html", context={"register_form": form})

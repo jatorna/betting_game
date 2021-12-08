@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, default=0)
     bets = models.IntegerField(default=0)
 
 
