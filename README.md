@@ -59,7 +59,7 @@ The application will store the number of bets per player to assign a different h
 
 A demo of the application can be used at: 
 
-[http://jatornahost.ddns.net:3500](http://jatornahost.ddns.net:3500)
+[http://jatornahost.ddns.net:8069](http://jatornahost.ddns.net:8069)
 
 Just register and bet! Once 4 different users have placed their bets the winner will be drawn!
 
